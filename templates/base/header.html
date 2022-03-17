@@ -1,0 +1,87 @@
+{% load static %}
+<!-- ---NAVBAR--- -->
+<header class="header--title flex align-items-center">
+    <div class="container">
+        <div class="align-items-center flex">
+            <div class="logo-wrapper">
+                <a class="logo" href="/">&lt;/malikov&gt;</a>
+            </div>
+            <ul class="nav align-items-center">
+                <li><a class="list-item" href="/about/">About</a></li>
+                <li class="blog-dropdown-list">
+                    <a class="list-item dropdown-toggle blog-href blog-dropdown" href="#" role="button"
+                       data-bs-toggle="dropdown" id="blogitems" aria-expanded="false">Blog</a>
+                    <div class="dropdown-menu blog-menu pt-0 mx-0 rounded-3 shadow overflow-hidden" style="width: 280px"
+                         aria-labelledby="blogitems">
+                        <form class="p-2 mb-2 bg-light border-bottom" method="get">
+                            <input type="search" class="form-control" autocomplete="false"
+                                   placeholder="Search an article...">
+                        </form>
+                        <ul class="list-unstyled mb-0">
+                            <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+                                <span class="d-inline-block bg-success rounded-circle"
+                                      style="width: .5em; height: .5em;"></span>
+                                Posts
+                            </a></li>
+                            <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" data-bs-toggle="modal"
+                                   data-bs-target="#modalCategory" style="cursor: pointer;">
+                                <span class="d-inline-block bg-primary rounded-circle"
+                                      style="width: .5em; height: .5em;"></span>
+                                Category cloud
+                            </a></li>
+                            <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" data-bs-toggle="modal"
+                                   data-bs-target="#modalTag" style="cursor: pointer;">
+                                <span class="d-inline-block bg-danger rounded-circle"
+                                      style="width: .5em; height: .5em;"></span>
+                                Tag cloud
+                            </a></li>
+                            <li><a class="dropdown-item d-flex align-items-center disabled gap-2 py-2" href="#">
+                                <span class="d-inline-block bg-info rounded-circle"
+                                      style="width: .5em; height: .5em;"></span>
+                                Coming Soon...
+                            </a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li><a class="list-item" href="/talks/">Api</a></li>
+                {% if user.is_authenticated %}
+                    <!-- Signed in -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle opac100" id="dropdownUser2" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            {#                            <img src="https://github.com/mdo.png" alt="mdo" class="rounded-circle" width="32"#}
+                            {#                                 height="32">#}
+                            <img src="{{ user_picture }}" alt="mdo" class="rounded-circle" width="32"
+                                         height="32">
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownUser2">
+                            <li class="dropdown-avatar"><a class="dropdown-item fw-bolder">@{{ user.username }}</a></li>
+                            <li class="dropdown-avatar"><a class="dropdown-item" href="#">Saved items</a></li>
+                            <li class="dropdown-avatar">
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="dropdown-avatar"><a class="dropdown-item text-danger"
+                                                           href="{% url 'logout' %}"><i
+                                    class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp; Sign out</a></li>
+                        </ul>
+                    </li>
+                    <!-- --- -->
+                {% else %}
+                    <li>
+                        <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal"
+                                data-bs-target="#modalSignin">Login
+                        </button>
+                    </li>
+                {% endif %}
+
+
+            </ul>
+            <div class="burger-menu">
+                <div class="bar bar--top"></div>
+                <div class="bar bar--middle"></div>
+                <div class="bar bar--bottom"></div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- -- End Navbar -- -->

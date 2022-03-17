@@ -1,0 +1,80 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+    <!--Main Section nav-->
+    <section class="section-title mt-5">
+        <div class="container">
+            <div class="section-content">
+                <h1 style="font-weight: 700; font-family: 'Montserrat', sans-serif;"><span
+                        style="border-bottom: 1px solid;">Welcome</span>-my blog about programming & technology</h1>
+            </div>
+        </div>
+    </section>
+    <!--End-->
+
+
+    <!--Main section-->
+    <section id="main-section" class="flex align-items-center">
+        <div class="container">
+            <div class="row justify-between align-top">
+                <div id="archive" class="col-md-10 mx-auto">
+                    <ul class="list-wrapper">
+                        {% for post in posts %}
+                            <!-- --ITEM-- -->
+                            <li>
+                                <a class="list-item" href="{{ post.get_absolute_url }}">
+                                    <div class="mt-2 "
+                                         style="font-size: 0.875rem; line-height: 1.625rem; font-weight: 600; text-transform: uppercase; color: #222;">
+                                        {{ post.created|date:"F d, Y" }} &nbsp;
+                                        <!--<span class="bookmark-bar ml-auto"><i class='bx bx-bookmarks' style="color:#291e95;"></i></span>-->
+                                        <!--Bookmark for post details-->
+                                    </div>
+                                    <div class="mt-2 title description" style="font-size: 1.68rem;">{{ post.title }}
+                                    </div>
+                                    <div class="mt-2 "
+                                         style="font-size: 1rem; opacity: 0.8; color: #222;">{{ post.description }}
+                                    </div>
+                                    <div class="mt-2 read-more" style="color: #cc007a; font-size: 1rem;">
+                                        <div class="d-flex align-items-center flex-wrap text-muted mb-md-0 mb-4">
+                                            <div class="fs-xs border-end pe-3 me-3 mb-2">
+                                                <span class="badge bg-faded-primary text-primary fs-base">{{ post.category }}</span>
+                                            </div>
+                                            <div class="d-flex mb-2">
+                                                <div class="d-flex align-items-center me-3">
+                                                    <i class="bx bx-like fs-base me-1"></i>
+                                                    <span class="fs-sm">{{ post.number_of_likes }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center me-3">
+                                                    <i class="bx bx-comment fs-base me-1"></i>
+                                                    <span class="fs-sm">{{ post.comments.all.count }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bx bx-bookmark-alt fs-base me-1"></i>
+                                                    <span class="fs-sm">{{ post.number_of_save }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <!--end item-->
+                        {% endfor %}
+                    </ul>
+                    <ul class="list-wrapper flex">
+                        <div class="mx-auto" style="font-size: 1.675rem;"><a href="#" class="next-href"
+                                                                             style="color: #bbb; font-weight: 700;"><i
+                                class="fa-solid fa-arrow-left-long"></i>&nbsp;
+                            PREV</a></div>
+                        <div class="mx-auto" style="font-size: 1.675rem;"><a href="#"
+                                                                             style="color:#291e95; font-weight: 700;">NEXT
+                            &nbsp;<i
+                                    class="fa-solid fa-arrow-right-long"></i></a></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Main END-->
+
+{% endblock %}
