@@ -42,7 +42,11 @@
                                             </div>
                                             <div class="d-flex mb-2">
                                                 <div class="d-flex align-items-center me-3">
-                                                    <i class="bx bx-like fs-base me-1"></i>
+                                                    {% if user in post.likes.all %}
+                                                        <i class="bx bxs-like fs-base me-1"></i>
+                                                    {% else %}
+                                                        <i class="bx bx-like fs-base me-1"></i>
+                                                    {% endif %}
                                                     <span class="fs-sm">{{ post.number_of_likes }}</span>
                                                 </div>
                                                 <div class="d-flex align-items-center me-3">
@@ -50,7 +54,11 @@
                                                     <span class="fs-sm">{{ post.comments.all.count }}</span>
                                                 </div>
                                                 <div class="d-flex align-items-center">
-                                                    <i class="bx bx-bookmark-alt fs-base me-1"></i>
+                                                    {% if user in post.saves.all %}
+                                                        <i class="bx bxs-bookmark-alt fs-base me-1"></i>
+                                                    {% else %}
+                                                        <i class="bx bx-bookmark-alt fs-base me-1"></i>
+                                                    {% endif %}
                                                     <span class="fs-sm">{{ post.number_of_save }}</span>
                                                 </div>
                                             </div>
@@ -62,14 +70,32 @@
                         {% endfor %}
                     </ul>
                     <ul class="list-wrapper flex">
-                        <div class="mx-auto" style="font-size: 1.675rem;"><a href="#" class="next-href"
-                                                                             style="color: #bbb; font-weight: 700;"><i
-                                class="fa-solid fa-arrow-left-long"></i>&nbsp;
-                            PREV</a></div>
-                        <div class="mx-auto" style="font-size: 1.675rem;"><a href="#"
-                                                                             style="color:#291e95; font-weight: 700;">NEXT
-                            &nbsp;<i
-                                    class="fa-solid fa-arrow-right-long"></i></a></div>
+                        {% if posts.has_previous %}
+                            <div class="mx-auto" style="font-size: 1.675rem;"><a
+                                    href="?page={{ posts.previous_page_number }}" class="next-href"
+                                    style="color: #291e95; font-weight: 700;"><i
+                                    class="fa-solid fa-arrow-left-long"></i>&nbsp;
+                                PREV</a></div>
+                        {% else %}
+                            <div class="mx-auto user-select-none" style="font-size: 1.675rem;"><a class="next-href"
+                                                                                                  style="color: #bbb; font-weight: 700;"><i
+                                    class="fa-solid fa-arrow-left-long"></i>&nbsp;
+                                PREV</a></div>
+                        {% endif %}
+                        {% if posts.has_next %}
+                            <div class="mx-auto" style="font-size: 1.675rem;"><a
+                                    href="?page={{ posts.next_page_number }}"
+                                    style="color:#291e95; font-weight: 700;">NEXT
+                                &nbsp;<i
+                                        class="fa-solid fa-arrow-right-long"></i></a></div>
+                        {% else %}
+                            <div class="mx-auto user-select-none" style="font-size: 1.675rem;"><a
+                                    style="color:#bbb; font-weight: 700;">NEXT
+                                &nbsp;<i
+                                        class="fa-solid fa-arrow-right-long"></i></a></div>
+                        {% endif %}
+
+
                     </ul>
                 </div>
             </div>

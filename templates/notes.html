@@ -1,0 +1,109 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block custom_style %}
+    <style>
+        .accordion-button:not(.collapsed) {
+            background-color: inherit;
+        }
+
+        .accordion-button:focus {
+            outline: none;
+            border-color: inherit;
+            z-index: 10000;
+            box-shadow: none;
+        }
+
+        .has-search .form-control {
+            padding-left: 2.375rem;
+        }
+
+        .has-search .form-control-feedback {
+            position: absolute;
+            z-index: 2;
+            display: block;
+            width: 2.375rem;
+            height: 2.375rem;
+            line-height: 2.375rem;
+            text-align: center;
+            pointer-events: none;
+            color: #aaa;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <!--Main Section nav-->
+    <section class="section-title mt-5">
+        <div class="container">
+            <div class="section-content">
+                <h1 style="font-weight: 700; font-family: 'Montserrat', sans-serif;">Quick <span
+                        style="color: #cc007a;">Notes</span></h1>
+            </div>
+            <!-- Search form -->
+            <div class="row">
+                <form>
+                    <div class="form-group has-search w-70 mx-auto">
+                        <span class="fa fa-search form-control-feedback"></span>
+                        <input type="text" name="note-search" class="form-control" placeholder="Search a note">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!--End-->
+
+    <!-- Notes section -->
+    <section id="" class="flex align-items-center">
+        <div class="container">
+            <div class="row justify-between align-top">
+                <div class="accordion accordion-flush" id="accordionFlushExample">
+                    <!-- Item -->
+                    {% for item in notes %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-heading{{ item.id }}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapse{{ item.id }}" aria-expanded="false"
+                                        aria-controls="flush-collapseOne">{{ item.title }}</button>
+                            </h2>
+                            <div id="flush-collapse{{ item.id }}" class="accordion-collapse collapse"
+                                 aria-labelledby="flush-heading{{ item.id }}" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">{{ item.note|safe }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <!-- End item -->
+
+                </div>
+                <ul class="list-wrapper flex">
+                    {% if notes.has_previous %}
+                        <div class="mx-auto" style="font-size: 1.675rem;"><a
+                                href="?page={{ notes.previous_page_number }}" class="next-href"
+                                style="color: #291e95; font-weight: 700;"><i
+                                class="fa-solid fa-arrow-left-long"></i>&nbsp;
+                            PREV</a></div>
+                    {% else %}
+                        <div class="mx-auto user-select-none" style="font-size: 1.675rem;"><a class="next-href"
+                                                                                              style="color: #bbb; font-weight: 700;"><i
+                                class="fa-solid fa-arrow-left-long"></i>&nbsp;
+                            PREV</a></div>
+                    {% endif %}
+                    {% if notes.has_next %}
+                        <div class="mx-auto" style="font-size: 1.675rem;"><a
+                                href="?page={{ notes.next_page_number }}"
+                                style="color:#291e95; font-weight: 700;">NEXT
+                            &nbsp;<i
+                                    class="fa-solid fa-arrow-right-long"></i></a></div>
+                    {% else %}
+                        <div class="mx-auto user-select-none" style="font-size: 1.675rem;"><a
+                                style="color:#bbb; font-weight: 700;">NEXT
+                            &nbsp;<i
+                                    class="fa-solid fa-arrow-right-long"></i></a></div>
+                    {% endif %}
+
+
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!--End-->
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import CustomUser
 from ckeditor.fields import RichTextField
 from django.urls import reverse
 
@@ -35,8 +35,8 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='post-images')
     allowed_comment = models.BooleanField(default=False)
-    likes = models.ManyToManyField(User, blank=True, related_name='likes')
-    saves = models.ManyToManyField(User, blank=True, related_name='saves')
+    likes = models.ManyToManyField(CustomUser, blank=True, related_name='likes')
+    saves = models.ManyToManyField(CustomUser, blank=True, related_name='saves')
     slug = models.SlugField()
 
     def number_of_likes(self):
@@ -59,7 +59,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     comment = models.CharField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -70,3 +70,18 @@ class Comment(models.Model):
         ordering = ('-created',)
         verbose_name = 'comment'
         verbose_name_plural = 'Comments'
+
+
+# Notes
+class Note(models.Model):
+    title = models.CharField(max_length=255)
+    note = RichTextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'note'
+        verbose_name_plural = 'Notes'
+        ordering = ('-created',)
+
+    def __str__(self):
+        return self.title

@@ -22,6 +22,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # accounts
+    'django.contrib.staticfiles',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -34,11 +35,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+
     # 'django.contrib.sites',
     # 3rd party
     'ckeditor',
     # local
+    'accounts.apps.AccountsConfig',
     'posts.apps.PostsConfig'
 ]
 
@@ -82,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('NAME'),
-        'USER': 'abdusamad',
+        'USER': 'malikov',
         'PASSWORD': os.getenv('PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
@@ -106,6 +108,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -143,3 +147,13 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     'github': {
+#         'SCOPE': [
+#             'user',
+#             'repo',
+#             'read:org',
+#         ],
+#     }
+# }

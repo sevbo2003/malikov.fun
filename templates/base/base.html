@@ -4,9 +4,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Malikov's Blog</title>
-    <meta name="author" content="Azimjon Pulatov">
-    <meta property="og:site_name" content="Azimjon's Blog"/>
+    <title>Abdusamad's Blog</title>
+    <meta name="author" content="Abdusamad Malikov">
+    <meta property="og:site_name" content="Abdusamad's blogs"/>
+    <meta name="description" content="{% block meta %}Abdusamad Malikov Blog posts. Django Python Programming{% endblock %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{% static 'assets/css/flexgridcombo.css' %}" rel="stylesheet">
     <!-- Bootsrap-->
@@ -22,6 +23,7 @@
     <link rel="shortcut icon" type="image/jpg" href="{% static 'assets/favicon.ico' %}">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
+    {% block custom_style %}{% endblock %}
 </head>
 <body>
 {% block header %}
@@ -45,6 +47,29 @@
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
 
+<!-- Facebook jsn -->
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{your-app-id}',
+      cookie     : true,
+      xfbml      : true,
+      version    : '{api-version}'
+    });
+
+    FB.AppEvents.logPageView();
+
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
 
 <script src="{% static 'assets/js/TweenMax.min.js' %}"></script>
 <script src="{% static 'assets/js/main.js' %}"></script>
@@ -55,7 +80,7 @@
         <div class="modal-content rounded-5 shadow">
             <div class="modal-header p-5 pb-4 border-bottom-0">
                 <!-- <h5 class="modal-title">Modal title</h5> -->
-                <h2 class="fw-bold mb-0">Sign up for free</h2>
+                <h2 class="fw-bold mb-0">Sign up to continue</h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-5 pt-0">
@@ -97,7 +122,7 @@
                 <p>Here the full list of categories. Choose one of them and see all posts which is related to this
                     category.</p>
                 {% for cat in category_cloud %}
-                    <a type="button" href="ggo.com" class="btn btn-outline-secondary mt-2 mx-2">{{ cat }} &nbsp;<span
+                    <a type="button" href="{% url 'category' cat %}" class="btn btn-outline-secondary mt-2 mx-2">{{ cat }} &nbsp;<span
                             class="badge rounded-pill bg-info text-dark">{{ cat.post_set.all.count }}</span></a>
                 {% endfor %}
             </div>
@@ -121,7 +146,7 @@
             <div class="modal-body py-0">
                 <p>Here the full list of tags. Choose one of them and see all posts which is related to this tag.</p>
                 {% for tag in tag_cloud %}
-                    <a type="button" class="btn btn-outline-secondary mt-2 mx-2">#{{ tag|lower }}</a>
+                    <a type="button" href="{% url 'tag' tag %}" class="btn btn-outline-secondary mt-2 mx-2">#{{ tag|lower }}</a>
                 {% endfor %}
             </div>
             <div class="modal-footer flex-column border-top-0">

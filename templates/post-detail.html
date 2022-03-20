@@ -1,5 +1,8 @@
 {% extends 'base/base.html' %}
 {% load static %}
+{% block meta %}
+    {{ post.title }} | {{ post.description }}
+{% endblock %}
 {% block content %}
 
     <div class="progress-bar">
@@ -13,20 +16,48 @@
                     <div class="d-flex align-items-center flex-wrap text-muted mb-md-0 mb-4 mt-4"
                          style="position: relative;">
                         <div class="fs-xs border-end pe-3 me-3 mb-2">
-                            <span class="badge bg-faded-primary text-primary fs-base" href="/">{{ post.category }}</span>
+                            <a href="{% url 'category' post.category %}">
+                                <span class="badge bg-faded-primary text-primary fs-base">{{ post.category }}</span></a>
                         </div>
                         <div class="fs-sm border-end pe-3 me-3 mb-2">{{ post.created|date:"F d, Y" }}</div>
                         <div class="d-flex mb-2">
                             <div class="d-flex align-items-center me-3">
-                                <i class="bx bx-like fs-base me-1"></i>
+                                {% if user in post.likes.all %}
+                                    <i class="bx bxs-like fs-base me-1"></i>
+                                {% else %}
+                                    <i class="bx bx-like fs-base me-1"></i>
+                                {% endif %}
                                 <span class="fs-sm">{{ post.number_of_likes }}</span>
                             </div>
                             <div class="d-flex align-items-center me-3">
                                 <i class="bx bx-comment fs-base me-1"></i>
                                 <span class="fs-sm">{{ post.comments.all.count }}</span>
                             </div>
-                            <a href="" class="bookmark-bar"><i class='bx bx-bookmarks'></i></a>
-                            <!-- <a href="" class="bookmark-bar"><i class='bx bxs-bookmarks' ></i></a> Bookmarked -->
+                            <form action="{% url 'save-post' post.id %}" method="post">{% csrf_token %}
+                                {% if user.is_authenticated %}
+                                    <button style="outline: none; border: none" type="submit" value="{{ post.id }}"
+                                            name="post_save_id">
+                                        <a class="bookmark-bar">
+                                            {% if user in post.saves.all %}
+                                                <i class='bx bxs-bookmarks'></i>
+                                            {% else %}
+                                                <i class='bx bx-bookmarks'></i>
+                                            {% endif %}
+                                        </a>
+                                    </button>
+                                {% else %}
+                                    <button style="outline: none; border: none" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#modalSignin">
+                                        <a class="bookmark-bar">
+                                            {% if user in post.saves.all %}
+                                                <i class='bx bxs-bookmarks'></i>
+                                            {% else %}
+                                                <i class='bx bx-bookmarks'></i>
+                                            {% endif %}
+                                        </a>
+                                    </button>
+                                {% endif %}
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -40,24 +71,40 @@
                     </figure>
                     <p>{{ post.body|safe }}</p>
                 </article>
-                <div class="div col-md-8 col-12 mb-5 d-flex flex-sm-row flex-column">
+                <div class="div col-md-8 col-12 mb-5 d-flex flex-sm-row flex-column" id="like-id">
                     <h5 class="mt-sm-1 mb-sm-2 mb-3 me-2 text-nowrap">Related tags:</h5>
                     <div>
                         {% for tag in post.tags.all %}
-                        <a href="/" class="btn btn-sm btn-outline-secondary me-2 mb-2">#{{ tag }}</a>
+                            <a href="{% url 'tag' tag %}" class="btn btn-sm btn-outline-secondary me-2 mb-2">#{{ tag }}</a>
                         {% endfor %}
                     </div>
                 </div>
 
 
                 <div class="div col-md-8 col-12 mb-5">
-                    <button type="button" class="btn btn-lg btn-outline-secondary w-100 like-btn">
-                        <i class='bx bx-like bx-like1'></i>Like it<span
-                            class="badge bg-primary shadow-primary mt-n1 ms-3">13</span>
-                    </button>
-                    <!-- <button type="button" class="btn btn-outline-success btn-lg w-100 like-btn">
-                       <i class='bx bxs-like' style='color:#f51010'></i>Liked (13)
-                    </button> Liked -->
+                    <form action="{% url 'like-post' post.id %}" method="post">{% csrf_token %}
+                        {% if user.is_authenticated %}
+                            <button type="submit" class="btn btn-lg btn-outline-secondary w-100 like-btn"
+                                    value="{{ post.id }}" name="post_id">
+                                {% if user in post.likes.all %}
+                                    <i class='bx bxs-like bx-like1'></i>
+                                {% else %}
+                                    <i class='bx bx-like bx-like1'></i>
+                                {% endif %}
+
+                                Like it<span
+                                    class="badge bg-primary shadow-primary mt-n1 ms-3">{{ post.likes.all.count }}</span>
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-lg btn-outline-secondary w-100 like-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalSignin">
+                                <i class='bx bx-like bx-like1'></i>
+                                Like it<span
+                                    class="badge bg-primary shadow-primary mt-n1 ms-3">{{ post.likes.all.count }}</span>
+                            </button>
+                        {% endif %}
+                    </form>
                 </div>
 
                 <div class="div col-lg-7 col-md-8 col-12">
@@ -86,83 +133,61 @@
                         </div>
                     </div>
                 </div>
-                <!--Comment section-->
-                <div class="col-md-8">
-                    <h5 class="fw-bolder fs-1 mb-4">12 Comment so far</h5>
-                    <div class="row">
-                        <!--Comment-->
-                        <div class="col-12">
-                            <div class="py-4">
-                                <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
-                                    <div class="d-flex align-items-center me-3">
-                                        <img src="./assets/img/avatar.jpeg" class="rounded-circle" alt="Avatar"
-                                             width="48">
-                                        <div class="ps-3">
-                                            <h6 class="fw-semibold mb-0">Esther Howard</h6>
-                                            <span class="fs-sm text-muted">4 mins ago</span>
+                {% if post.allowed_comment %}
+                    <!--Comment section-->
+                    <div class="col-md-8">
+                        {% if post.comments.all.count %}
+                            <h5 class="fw-bolder fs-1 mb-4">{{ post.comments.all.count }} Comment so far</h5>
+                        {% else %}
+                            <h5 class="fw-bolder fs-1 mb-4">No comments yet. Be first one</h5>
+                        {% endif %}
+                        <div class="row">
+                            {% for comment in post.comments.all %}
+                                <!--Comment-->
+                                <div class="col-12">
+                                    <div class="py-4">
+                                        <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
+                                            <div class="d-flex align-items-center me-3">
+                                                <img src="{{ comment_picture }}" class="rounded-circle" alt="Avatar"
+                                                     width="48">
+                                                <div class="ps-3">
+                                                    <h6 class="fw-semibold mb-0">@{{ comment.author.username }}</h6>
+                                                    <span class="fs-sm text-muted">{{ comment.created|timesince }} ago</span>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <p class="mb-0">{{ comment.comment }}</p>
                                     </div>
+                                    <hr class="my-2">
                                 </div>
-                                <p class="mb-0">Nibh enim porta ut augue felis, donec sit luctus. Quis ullamcorper dolor
-                                    sit mauris. Hendrerit eu libero, eu tristique sodales ultrices etiam adipiscing.
-                                    Donec viverra sodales arcu gravida nibh at. Neque lobortis quis porta integer et
-                                    placerat lectus scelerisque. Velit eget malesuada morbi faucibus at sed euismod.
-                                    Tortor, eu ut id tincidunt leo placerat luctus.</p>
-                            </div>
-                            <hr class="my-2">
+                                <!-- End comment -->
+                            {% endfor %}
                         </div>
-                        <div class="col-12">
-                            <div class="py-4">
-                                <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
-                                    <div class="d-flex align-items-center me-3">
-                                        <img src="./assets/img/avatar.jpeg" class="rounded-circle" alt="Avatar"
-                                             width="48">
-                                        <div class="ps-3">
-                                            <h6 class="fw-semibold mb-0">Esther Howard</h6>
-                                            <span class="fs-sm text-muted">4 mins ago</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mb-0">Nibh encerat lectus scelerisque. Velit eget malesuada morbi faucibus at
-                                    sed euismod. Tortor, eu ut id tincidunt leo placerat luctus.</p>
-                            </div>
-                            <hr class="my-2">
-                        </div>
-                        <div class="col-12">
-                            <div class="py-4">
-                                <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
-                                    <div class="d-flex align-items-center me-3">
-                                        <img src="./assets/img/avatar.jpeg" class="rounded-circle" alt="Avatar"
-                                             width="48">
-                                        <div class="ps-3">
-                                            <h6 class="fw-semibold mb-0">Esther Howard</h6>
-                                            <span class="fs-sm text-muted">4 mins ago</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mb-0">Nibh eniteger et placerat lectus scelerisque. Velit eget malesuada morbi
-                                    faucibus at sed euismod. Tortor, eu ut id tincidunt leo placerat luctus.</p>
-                            </div>
-                            <hr class="my-2">
-                        </div>
-                        <!-- End comment -->
                     </div>
-                </div>
-                <div class="col-md-8">
-                    <form action="." method="post" class="row gy-4 needs-validation">
-                        <div class="col-12">
-                            <h3 class="fw-bolder fs-3 mb-4 mt-5">Leave your Comment</h3>
-                            <textarea id="c-comment" class="form-control form-control-lg" rows="3"
-                                      placeholder="Type your comment here..." required=""></textarea>
-                            <span class="invalid-tooltip">Please, enter your comment.</span>
-                        </div>
-                        <div class="col-12 w-50">
-                            <button type="submit" class="btn btn-lg btn-primary w-sm-auto w-100 mt-2">Post comment
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
+                    <div class="col-md-8">
+                        <form action="." method="post" class="row gy-4 needs-validation">{% csrf_token %}
+                            <div class="col-12">
+                                <h3 class="fw-bolder fs-3 mb-4 mt-5">Leave your Comment</h3>
+                                <textarea id="comment_id" name="comment" type="text"
+                                          class="form-control form-control-lg" rows="3"
+                                          placeholder="Type your comment here..."></textarea>
+                                <span class="invalid-tooltip">Please, enter your comment.</span>
+                            </div>
+                            <div class="col-12 w-50">
+                                {% if user.is_authenticated %}
+                                    <button type="submit" class="btn btn-lg btn-primary w-sm-auto w-100 mt-2">Post
+                                        comment
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-lg btn-primary w-sm-auto w-100 mt-2"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalSignin">Post comment
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
                 <!--Pagination-->
                 <ul class="custom-pagination col-md-8 col-12">
                     <div class="pagination-list row">

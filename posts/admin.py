@@ -12,3 +12,10 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('created', 'category', 'allowed_comment')
     search_fields = ('titles', 'category')
     prepopulated_fields = {'slug': ('title',)}
+
+
+@admin.register(models.Note)
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created')
+    list_filter = ('created',)
+    search_fields = ('title', 'note')
