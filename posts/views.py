@@ -21,6 +21,11 @@ def save_view(request, pk):
     path = f"{post.get_absolute_url()}"
     return HttpResponseRedirect(path)
 
+def delete_save_view(request, pk):
+    post = get_object_or_404(Post, pk=request.POST.get('post_delete_id'))
+    post.saves.remove(request.user)
+    path = f"{post.get_absolute_url()}"
+    return HttpResponseRedirect(path)
 
 def home(request):
     query = request.GET.get('search')
@@ -58,6 +63,8 @@ def by_category(request, category):
         'category': category
     }
     return render(request, 'by-category.html', context)
+
+
 def by_tag(request, tag):
     tag = get_object_or_404(Tag, tag=tag)
     posts = Post.objects.filter(tags__tag__icontains=tag)
@@ -76,6 +83,22 @@ def by_tag(request, tag):
     return render(request, 'by-tag.html', context)
 
 
+def saved_posts(request):
+    posts = Post.objects.filter(saves__username=request.user)
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(posts, 5)
+    try:
+        posts = paginator.page(page_num)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    context = {
+        'posts': posts
+    }
+    return render(request, 'saved-items.html', context)
+
+
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     if request.method == 'POST':
@@ -91,10 +114,20 @@ def post_detail(request, slug):
             return HttpResponseRedirect(path)
     else:
         comment_form = CommentForm
-
+    post = get_object_or_404(Post, slug=slug)
+    try:
+        next = Post.objects.get(id=post.id+1)
+    except:
+        next = False
+    try:
+        prev = Post.objects.get(id=post.id-1)
+    except:
+        prev = False
     context = {
         'post': post,
         'comment_form': comment_form,
+        'next': next,
+        'prev': prev
     }
     return render(request, 'post-detail.html', context)
 

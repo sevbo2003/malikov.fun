@@ -12,6 +12,8 @@ urlpatterns = [
     path('account/logout/', logoutview.as_view(), name='logout'),
     # local apps
     path('', include('posts.urls')),
+    # api
+    path('api/', include('api.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

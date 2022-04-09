@@ -93,12 +93,8 @@
                         Continue with Google
                     </button>
                 </form>
-                <button class="w-100 py-2 mb-2 btn btn-outline-primary rounded-4" type="submit">
-                    <i class="fa-brands fa-facebook-f"></i>&nbsp;
-                    Continue with Facebook
-                </button>
                 <form action="{% provider_login_url 'github' %}" method="post">{% csrf_token %}
-                    <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-4"
+                    <button class="w-100 py-2 mb-2 btn btn-outline-primary rounded-4"
                             href="{% provider_login_url 'github' %}" type="submit">
                         <i class="fa-brands fa-github"></i>&nbsp;
                         Continue with GitHub

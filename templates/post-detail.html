@@ -33,31 +33,34 @@
                                 <i class="bx bx-comment fs-base me-1"></i>
                                 <span class="fs-sm">{{ post.comments.all.count }}</span>
                             </div>
-                            <form action="{% url 'save-post' post.id %}" method="post">{% csrf_token %}
-                                {% if user.is_authenticated %}
-                                    <button style="outline: none; border: none" type="submit" value="{{ post.id }}"
-                                            name="post_save_id">
-                                        <a class="bookmark-bar">
-                                            {% if user in post.saves.all %}
-                                                <i class='bx bxs-bookmarks'></i>
-                                            {% else %}
+                            {% if user.is_authenticated %}
+                                {% if user not in post.saves.all %}
+                                    <form action="{% url 'save-post' post.id %}" method="post">{% csrf_token %}
+                                        <button style="outline: none; border: none" type="submit" value="{{ post.id }}"
+                                                name="post_save_id">
+                                            <a class="bookmark-bar" title="Save for reading later">
                                                 <i class='bx bx-bookmarks'></i>
-                                            {% endif %}
-                                        </a>
-                                    </button>
+                                            </a>
+                                        </button>
+                                    </form>
                                 {% else %}
-                                    <button style="outline: none; border: none" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#modalSignin">
-                                        <a class="bookmark-bar">
-                                            {% if user in post.saves.all %}
+                                    <form action="{% url 'delete-post' post.id %}" method="post">{% csrf_token %}
+                                        <button style="outline: none; border: none" type="submit" value="{{ post.id }}"
+                                                name="post_delete_id">
+                                            <a class="bookmark-bar" title="delete from saved posts">
                                                 <i class='bx bxs-bookmarks'></i>
-                                            {% else %}
-                                                <i class='bx bx-bookmarks'></i>
-                                            {% endif %}
-                                        </a>
-                                    </button>
+                                            </a>
+                                        </button>
+                                    </form>
                                 {% endif %}
-                            </form>
+                            {% else %}
+                                <button style="outline: none; border: none" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#modalSignin">
+                                    <a class="bookmark-bar" title="Sign up to save">
+                                        <i class='bx bx-bookmarks'></i>
+                                    </a>
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -75,7 +78,8 @@
                     <h5 class="mt-sm-1 mb-sm-2 mb-3 me-2 text-nowrap">Related tags:</h5>
                     <div>
                         {% for tag in post.tags.all %}
-                            <a href="{% url 'tag' tag %}" class="btn btn-sm btn-outline-secondary me-2 mb-2">#{{ tag }}</a>
+                            <a href="{% url 'tag' tag %}"
+                               class="btn btn-sm btn-outline-secondary me-2 mb-2">#{{ tag }}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -114,19 +118,23 @@
                             name="mc-embedded-subscribe-form">
                         <h5 class="fw-bolder fs-3 mb-4">Subscribe:</h5>
                         <div class="mb-4 pb-lg-3 align-items-center justify-content-between d-flex flex-wrap">
-                            <a href="#" class="btn btn-icon btn-secondary btn-linkedin mb-2"
+                            <a href="https://www.linkedin.com/in/abdusamad-malikov/" target="_blank"
+                               class="btn btn-icon btn-secondary btn-linkedin mb-2"
                                style="background-color: #d4d7e5; border: none;">
                                 <i class="bx bxl-linkedin soical-acc"></i>
                             </a>
-                            <a href="#" class="btn btn-icon btn-secondary btn-facebook mb-2"
+                            <a href="https://www.facebook.com/abdusamad.malikov.18/"
+                               class="btn btn-icon btn-secondary btn-facebook mb-2" target="_blank"
                                style="background-color: #d4d7e5; border: none;">
                                 <i class="bx bxl-facebook soical-acc"></i>
                             </a>
-                            <a href="#" class="btn btn-icon btn-secondary btn-github mb-2"
+                            <a href="https://github.com/sevbo2003" class="btn btn-icon btn-secondary btn-github mb-2"
+                               target="_blank"
                                style="background-color: #d4d7e5; border: none;">
                                 <i class="bx bxl-github soical-acc"></i>
                             </a>
-                            <a href="#" class="btn btn-icon btn-secondary btn-instagram mb-2"
+                            <a href="https://www.instagram.com/malikov.dev/"
+                               class="btn btn-icon btn-secondary btn-instagram mb-2" target="_blank"
                                style="background-color: #d4d7e5; border: none;">
                                 <i class="bx bxl-instagram soical-acc"></i>
                             </a>
@@ -148,7 +156,8 @@
                                     <div class="py-4">
                                         <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
                                             <div class="d-flex align-items-center me-3">
-                                                <img src="{{ comment_picture }}" class="rounded-circle" alt="Avatar"
+                                                <img src="{% static 'assets/img/comment.jpeg' %}" class="rounded-circle"
+                                                     alt="Avatar"
                                                      width="48">
                                                 <div class="ps-3">
                                                     <h6 class="fw-semibold mb-0">@{{ comment.author.username }}</h6>
@@ -191,17 +200,35 @@
                 <!--Pagination-->
                 <ul class="custom-pagination col-md-8 col-12">
                     <div class="pagination-list row">
-                        <li class="col prev">
-                            <a href="/blog/universitetda-oqishga-7-sabab/" title="Universitetda O'qishga 7 Sabab">
-                                ← Previous
-                            </a>
-                        </li>
-                        <li class="col"><a href="/blog/">See More</a></li>
-                        <li class="col next">
-                            <a href="/blog/yandexga-topshirish-haqida/" title="Yandex'ga Topshirish Haqida">
-                                Next →
-                            </a>
-                        </li>
+                        {% if prev %}
+                            <li class="col prev">
+                                <a href="{{ prev.get_absolute_url }}" title="{{ prev.title }}">
+                                    ← Previous
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="col prev">
+                                <a class="user-select-none disabled" style="color: #bbb" title="No psot">
+                                    ← Previous
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        <li class="col"><a href="{% url 'home' %}">See More</a></li>
+                        {% if next %}
+                            <li class="col next">
+                                <a href="{{ next.get_absolute_url }}" title="{{ next.title }}">
+                                    Next →
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="col next">
+                                <a class="user-select-none disabled" style="color: #bbb" title="No post yet">
+                                    Next →
+                                </a>
+                            </li>
+                        {% endif %}
+
                     </div>
                 </ul>
             </div>
