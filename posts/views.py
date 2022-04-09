@@ -6,13 +6,15 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 def like_view(request, pk):
-    post = get_object_or_404(Post, pk=request.POST.get('post_id'))
+    post = get_object_or_404(Post, id=pk)
     post.likes.add(request.user)
-    path = f"{post.get_absolute_url()}#like-id"
-    return HttpResponseRedirect(path)
+    # path = f"{post.get_absolute_url()}#like-id"
+    # return HttpResponseRedirect(path)
+    return HttpResponse("<h4 class='text-success'> 😍 </h4>")
 
 
 def save_view(request, pk):
@@ -20,6 +22,8 @@ def save_view(request, pk):
     post.saves.add(request.user)
     path = f"{post.get_absolute_url()}"
     return HttpResponseRedirect(path)
+    # return HttpResponse("<a class=\"bookmark-bar\" title=\"delete from saved posts\"><i class='bx bxs-bookmarks\'></i></a>")
+    return messages.success(request, "Post saved")
 
 def delete_save_view(request, pk):
     post = get_object_or_404(Post, pk=request.POST.get('post_delete_id'))

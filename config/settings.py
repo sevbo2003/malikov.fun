@@ -69,7 +69,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 # custom
-                'posts.context_user.picture',
+                # 'posts.context_user.picture',
                 'posts.header_context.category_tag_cloud',
             ],
         },
@@ -159,3 +159,14 @@ LOGOUT_REDIRECT_URL = 'home'
 #         ],
 #     }
 # }
+
+# MESSAGES
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: "alert-secondary",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
+}

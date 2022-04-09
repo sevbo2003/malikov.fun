@@ -3,6 +3,7 @@
 {% block meta %}
     {{ post.title }} | {{ post.description }}
 {% endblock %}
+{% block title %} {{ post.title }} {% endblock %}
 {% block content %}
 
     <div class="progress-bar">
@@ -36,7 +37,7 @@
                             {% if user.is_authenticated %}
                                 {% if user not in post.saves.all %}
                                     <form action="{% url 'save-post' post.id %}" method="post">{% csrf_token %}
-                                        <button style="outline: none; border: none" type="submit" value="{{ post.id }}"
+                                        <button type="submit"  style="outline: none; border: none" value="{{ post.id }}"
                                                 name="post_save_id">
                                             <a class="bookmark-bar" title="Save for reading later">
                                                 <i class='bx bx-bookmarks'></i>
@@ -68,8 +69,7 @@
                     <h1>{{ post.title }}<br></h1>
                     <address style="display: none"><br></address>
                     <figure>
-                        <div class="figure_wrapper"><img
-                                src="{{ post.image.url }}"></div>
+                        <div class="figure_wrapper"><img src="{{ post.image.url }}"></div>
                         <figcaption></figcaption>
                     </figure>
                     <p>{{ post.body|safe }}</p>
@@ -86,36 +86,34 @@
 
 
                 <div class="div col-md-8 col-12 mb-5">
-                    <form action="{% url 'like-post' post.id %}" method="post">{% csrf_token %}
+{#                    <form action="{% url 'like-post' post.id %}" method="post">{% csrf_token %}#}
                         {% if user.is_authenticated %}
-                            <button type="submit" class="btn btn-lg btn-outline-secondary w-100 like-btn"
-                                    value="{{ post.id }}" name="post_id">
+                            <button hx-post="{% url 'like-post' post.id %}" hx-swap="outerHTML" class="btn btn-lg btn-outline-secondary w-100 like-btn"
+                                    value="{{ post.id }}"
+                                    name="post_id">
                                 {% if user in post.likes.all %}
                                     <i class='bx bxs-like bx-like1'></i>
                                 {% else %}
                                     <i class='bx bx-like bx-like1'></i>
                                 {% endif %}
 
-                                Like it<span
-                                    class="badge bg-primary shadow-primary mt-n1 ms-3">{{ post.likes.all.count }}</span>
+                                Like <span
+                                    class="badge bg-primary shadow-primary mt-n1 ms-3">{{ post.number_of_likes }}</span>
                             </button>
                         {% else %}
                             <button type="button" class="btn btn-lg btn-outline-secondary w-100 like-btn"
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalSignin">
                                 <i class='bx bx-like bx-like1'></i>
-                                Like it<span
-                                    class="badge bg-primary shadow-primary mt-n1 ms-3">{{ post.likes.all.count }}</span>
+                                Like <span
+                                    class="badge bg-primary shadow-primary mt-n1 ms-3">{{ post.number_of_likes }}</span>
                             </button>
                         {% endif %}
-                    </form>
+{#                    </form>#}
                 </div>
 
                 <div class="div col-lg-7 col-md-8 col-12">
-                    <div
-                            class="subscribe-form"
-                            id="mc-embedded-subscribe-form"
-                            name="mc-embedded-subscribe-form">
+                    <div class="subscribe-form" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form">
                         <h5 class="fw-bolder fs-3 mb-4">Subscribe:</h5>
                         <div class="mb-4 pb-lg-3 align-items-center justify-content-between d-flex flex-wrap">
                             <a href="https://www.linkedin.com/in/abdusamad-malikov/" target="_blank"
@@ -129,8 +127,7 @@
                                 <i class="bx bxl-facebook soical-acc"></i>
                             </a>
                             <a href="https://github.com/sevbo2003" class="btn btn-icon btn-secondary btn-github mb-2"
-                               target="_blank"
-                               style="background-color: #d4d7e5; border: none;">
+                               target="_blank" style="background-color: #d4d7e5; border: none;">
                                 <i class="bx bxl-github soical-acc"></i>
                             </a>
                             <a href="https://www.instagram.com/malikov.dev/"
@@ -156,9 +153,8 @@
                                     <div class="py-4">
                                         <div class="d-flex align-items-center justify-content-between pb-2 mb-1">
                                             <div class="d-flex align-items-center me-3">
-                                                <img src="{% static 'assets/img/comment.jpeg' %}" class="rounded-circle"
-                                                     alt="Avatar"
-                                                     width="48">
+                                                <img src="{{ comment.author.socialaccount_set.all.0.get_avatar_url }}"
+                                                     class="rounded-circle" alt="Avatar" width="48">
                                                 <div class="ps-3">
                                                     <h6 class="fw-semibold mb-0">@{{ comment.author.username }}</h6>
                                                     <span class="fs-sm text-muted">{{ comment.created|timesince }} ago</span>
@@ -178,8 +174,8 @@
                             <div class="col-12">
                                 <h3 class="fw-bolder fs-3 mb-4 mt-5">Leave your Comment</h3>
                                 <textarea id="comment_id" name="comment" type="text"
-                                          class="form-control form-control-lg" rows="3"
-                                          placeholder="Type your comment here..."></textarea>
+                                          class="form-control form-control-lg"
+                                          rows="3" placeholder="Type your comment here..."></textarea>
                                 <span class="invalid-tooltip">Please, enter your comment.</span>
                             </div>
                             <div class="col-12 w-50">

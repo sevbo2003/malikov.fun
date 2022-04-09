@@ -54,7 +54,7 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle opac100" id="dropdownUser2" data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            <img src="{{ user_picture }}" alt="mdo" class="rounded-circle" width="32"
+                            <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="mdo" class="rounded-circle" width="32"
                                  height="32">
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownUser2">
@@ -86,5 +86,6 @@
             </div>
         </div>
     </div>
+    {% include 'base/messages.html' %}
 </header>
 <!-- -- End Navbar -- -->
