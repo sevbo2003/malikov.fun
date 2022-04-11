@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
+
 def like_view(request, pk):
     post = get_object_or_404(Post, id=pk)
     post.likes.add(request.user)
